@@ -22,8 +22,8 @@ jobs:
     # Build BACKEND
     - name: Build Backend Image
       run: |
-        cd crud-dd-task-mean-app/backend
-        docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/backend .
+        cd $GITHUB_WORKSPACE/crud-dd-task-mean-app/backend
+        docker build  -t ${{ secrets.DOCKER_USERNAME }}/backend .
 
     - name: Push Backend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/backend
@@ -31,8 +31,8 @@ jobs:
     # Build FRONTEND
     - name: Build Frontend Image
       run: |
-        cd crud-dd-task-mean-app/frontend
-        docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/frontend .
+       cd $GITHUB_WORKSPACE/crud-dd-task-mean-app/frontend
+        docker build  -t ${{ secrets.DOCKER_USERNAME }}/frontend .
 
     - name: Push Frontend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend
