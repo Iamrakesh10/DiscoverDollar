@@ -19,9 +19,15 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Debug paths
+      run: |
+      echo "WORKSPACE: $GITHUB_WORKSPACE"
+      ls -R .
+   
+
     # Build BACKEND using working-directory (guaranteed correct)
     - name: Build Backend Image
-      working-directory: crud-dd-task-mean-app/backend
+      working-directory: ./crud-dd-task-mean-app/backend
       run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend .
 
     - name: Push Backend Image
@@ -29,7 +35,7 @@ jobs:
 
     # Build FRONTEND
     - name: Build Frontend Image
-      working-directory: crud-dd-task-mean-app/frontend
+      working-directory: ./crud-dd-task-mean-app/frontend
       run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend .
 
     - name: Push Frontend Image
