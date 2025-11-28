@@ -17,7 +17,9 @@ services:
       - PORT=8080
 
   frontend:
-    image: rakesh8289/frontend
+    build:
+      context: ./crud-dd-task-mean-app/frontend
+      dockerfile: Dockerfile
     container_name: frontend
     networks:
       - app-network
