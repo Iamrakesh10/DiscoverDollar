@@ -1,5 +1,4 @@
 version: '3'
-
 services:
 
   mongodb:
@@ -7,27 +6,25 @@ services:
     container_name: mongodb
     networks:
       - app-network
-    environment:
-      MONGO_INITDB_DATABASE: test
 
   backend:
     image: rakesh8289/backend
     container_name: backend
+    networks:
+      - app-network
     environment:
       - MONGO_URL=mongodb://mongodb:27017/test
       - PORT=8080
-    networks:
-      - app-network
 
   frontend:
     image: rakesh8289/frontend
     container_name: frontend
+    networks:
+      - app-network
     ports:
       - "80:80"
     depends_on:
       - backend
-    networks:
-      - app-network
 
 networks:
   app-network:
