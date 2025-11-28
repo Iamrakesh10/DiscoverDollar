@@ -25,22 +25,22 @@ jobs:
         ls -R .
 
     - name: Build Backend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend .
       working-directory: ${{ github.workspace }}/crud-dd-task-mean-app/backend
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend .
 
     - name: Push Backend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/backend
 
     - name: Build Frontend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend .
       working-directory: ${{ github.workspace }}/crud-dd-task-mean-app/frontend
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend .
 
     - name: Push Frontend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend
 
-    - name: Deploy with docker-compose
+    - name: Deploy on EC2
       run: |
         cd /home/ubuntu
-        sudo docker-compose down
+        sudo docker-compose down || true
         sudo docker-compose pull
         sudo docker-compose up -d
