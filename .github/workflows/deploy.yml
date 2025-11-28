@@ -1,4 +1,4 @@
-name: CI/CD Pipeline (Advanced Build Options)
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,73 +7,45 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted   # EC2 GitHub Runner
+    runs-on: self-hosted
 
     steps:
-
-    # ---------------------------------------------------------
-    # 1. CHECKOUT CODE
-    # ---------------------------------------------------------
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # ---------------------------------------------------------
-    # 2. LOGIN TO DOCKER HUB
-    # ---------------------------------------------------------
     - name: Login to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # ---------------------------------------------------------
-    # 3. DEBUG PATHS (VERY IMPORTANT)
-    # ---------------------------------------------------------
-    - name: Debug workspace
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Debug paths
       run: |
-        echo "GitHub Workspace: $GITHUB_WORKSPACE"
+        echo "WORKSPACE: $GITHUB_WORKSPACE"
         ls -R .
 
-    # ---------------------------------------------------------
-    # 4. BUILD BACKEND WITH ADVANCED OPTIONS
-    # ---------------------------------------------------------
     - name: Build Backend Image
       working-directory: crud-dd-task-mean-app/backend
       run: |
-        docker build \
-          --platform linux/amd64 \
-          --no-cache \
-          --build-arg NODE_ENV=production \
-          -t ${{ secrets.DOCKER_USERNAME }}/backend:latest \
-          .
+           docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/backend --load .
 
-    # PUSH BACKEND
     - name: Push Backend Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/backend
 
-    # ---------------------------------------------------------
-    # 5. BUILD FRONTEND WITH ADVANCED OPTIONS
-    # ---------------------------------------------------------
     - name: Build Frontend Image
       working-directory: crud-dd-task-mean-app/frontend
       run: |
-        docker build \
-          --platform linux/amd64 \
-          --no-cache \
-          --build-arg BUILD_ENV=production \
-          -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest \
-          .
+           docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/frontend --load .
 
-    # PUSH FRONTEND
     - name: Push Frontend Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend
 
-    # ---------------------------------------------------------
-    # 6. DEPLOY USING DOCKER-COMPOSE ON EC2
-    # ---------------------------------------------------------
     - name: Deploy using docker-compose
       run: |
         cd /home/ubuntu
-        sudo docker-compose pull
         sudo docker-compose down || true
+        sudo docker-compose pull
         sudo docker-compose up -d
