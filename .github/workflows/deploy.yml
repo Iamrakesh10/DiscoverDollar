@@ -61,4 +61,11 @@ jobs:
       run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
     # ---------------------------------------------------------
-    # DEPLOY USING DOCKER COMPOSE (on the EC2 runner
+    # DEPLOY USING DOCKER COMPOSE (on the EC2 runner)
+    - name: Deploy using docker-compose
+      run: |
+        cd /home/ubuntu
+        sudo docker-compose down || true
+        sudo docker-compose pull
+        sudo docker-compose up -d
+
