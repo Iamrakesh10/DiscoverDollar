@@ -21,7 +21,7 @@ jobs:
 
     - name: Build Backend Image
       run: |
-        cd crud-dd-task-mean-app/crud-dd-task-mean-app/backend
+        cd crud-dd-task-mean-app/backend
         docker build -t ${{ secrets.DOCKER_USERNAME }}/backend .
 
     - name: Push Backend Image
@@ -29,7 +29,7 @@ jobs:
 
     - name: Build Frontend Image
       run: |
-        cd crud-dd-task-mean-app/crud-dd-task-mean-app/frontend
+        cd crud-dd-task-mean-app/frontend
         docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend .
 
     - name: Push Frontend Image
