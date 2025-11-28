@@ -64,7 +64,7 @@ jobs:
     # DEPLOY USING DOCKER COMPOSE (on the EC2 runner)
     - name: Deploy using docker-compose
       run: |
-        cd /home/ubuntu/DiscoverDollar/crud-dd-task-mean-app/docker-compose.yml
+        cd /home/ubuntu/actions-runner/_work/DiscoverDollar/DiscoverDollar
         sudo docker-compose down || true
         sudo docker-compose pull
         sudo docker-compose up -d --remove-orphans
