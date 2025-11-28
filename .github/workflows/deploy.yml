@@ -21,11 +21,10 @@ jobs:
 
     - name: Debug paths
       run: |
-      echo "WORKSPACE: $GITHUB_WORKSPACE"
-      ls -R .
-   
+        echo "WORKSPACE: $GITHUB_WORKSPACE"
+        ls -R .
 
-    # Build BACKEND using working-directory (guaranteed correct)
+    # Build BACKEND
     - name: Build Backend Image
       working-directory: ./crud-dd-task-mean-app/backend
       run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend .
