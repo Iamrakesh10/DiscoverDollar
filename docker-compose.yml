@@ -5,24 +5,28 @@ services:
   mongodb:
     image: mongo
     container_name: mongodb
-    ports:
-      - "27017:27017"
+    networks:
+      - appnet
+    environment:
+      - MONGO_INITDB_DATABASE=test
 
   backend:
     image: rakesh8289/backend
     container_name: backend
-    ports:
-      - "8080:8080"
+    networks:
+      - appnet
     environment:
       - MONGO_URL=mongodb://mongodb:27017/test
       - PORT=8080
-    depends_on:
-      - mongodb
 
   frontend:
     image: rakesh8289/frontend
     container_name: frontend
     ports:
       - "80:80"
-    depends_on:
-      - backend
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
