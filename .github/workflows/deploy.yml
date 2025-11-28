@@ -19,33 +19,23 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Debug paths
-      run: |
-        echo "WORKSPACE: $GITHUB_WORKSPACE"
-        ls -R .
-
     - name: Build Backend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend .
       working-directory: crud-dd-task-mean-app/backend
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend .
 
     - name: Push Backend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/backend
 
     - name: Build Frontend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend .
       working-directory: crud-dd-task-mean-app/frontend
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend .
 
     - name: Push Frontend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend
 
-    - name: Deploy on EC2 via SSH
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          cd /home/ubuntu
-          sudo docker-compose down
-          sudo docker-compose pull
-          sudo docker-compose up -d
+    - name: Deploy using docker-compose (direct on EC2)
+      run: |
+        cd /home/ubuntu
+        sudo docker-compose down
+        sudo docker-compose pull
+        sudo docker-compose up -d
