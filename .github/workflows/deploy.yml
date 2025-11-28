@@ -7,45 +7,58 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted   # your EC2 runner
 
     steps:
+
+    # ---------------------------------------------------------
+    # CHECKOUT CODE
+    # ---------------------------------------------------------
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # ---------------------------------------------------------
+    # LOGIN TO DOCKER HUB
+    # ---------------------------------------------------------
     - name: Login to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-
-    - name: Debug paths
+    # ---------------------------------------------------------
+    # DEBUG WORKSPACE (optional but useful)
+    # ---------------------------------------------------------
+    - name: Debug workspace
       run: |
-        echo "WORKSPACE: $GITHUB_WORKSPACE"
+        echo "CURRENT DIR: $(pwd)"
         ls -R .
 
+    # ---------------------------------------------------------
+    # BUILD BACKEND IMAGE
+    # ---------------------------------------------------------
     - name: Build Backend Image
       working-directory: crud-dd-task-mean-app/backend
       run: |
-           docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/backend --load .
+        docker build . \
+        --file Dockerfile \
+        --tag ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
     - name: Push Backend Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/backend
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
+    # ---------------------------------------------------------
+    # BUILD FRONTEND IMAGE
+    # ---------------------------------------------------------
     - name: Build Frontend Image
       working-directory: crud-dd-task-mean-app/frontend
       run: |
-           docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/frontend --load .
+        docker build . \
+        --file Dockerfile \
+        --tag ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
     - name: Push Frontend Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
-    - name: Deploy using docker-compose
-      run: |
-        cd /home/ubuntu
-        sudo docker-compose down || true
-        sudo docker-compose pull
-        sudo docker-compose up -d
+    # ---------------------------------------------------------
+    # DEPLOY USING DOCKER COMPOSE (on the EC2 runner
