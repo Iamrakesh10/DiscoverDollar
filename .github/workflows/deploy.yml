@@ -30,7 +30,7 @@ jobs:
     - name: Build Backend Image
       working-directory: crud-dd-task-mean-app/backend
       run: |
-        docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/backend --load .
+           docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/backend --load .
 
     - name: Push Backend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/backend
@@ -38,7 +38,7 @@ jobs:
     - name: Build Frontend Image
       working-directory: crud-dd-task-mean-app/frontend
       run: |
-        docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/frontend --load .
+           docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/frontend --load .
 
     - name: Push Frontend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend
